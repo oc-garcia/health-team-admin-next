@@ -1,6 +1,7 @@
 import TopBar from "@/components/TopBar";
 import StaffViewer from "@/components/StaffViewer";
 import Footer from "@/components/Footer";
+import ActionsBar from "@/components/ActionsBar/ActionsBar";
 import { Box } from "@mui/material";
 
 export default function Home() {
@@ -20,10 +21,11 @@ export default function Home() {
         sx={{
           flex: 1,
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          flexDirection: "column",
+          gap: "1rem",
           bgcolor: (theme) => theme.palette.background.default,
         }}>
+        <ActionsBar />
         <StaffViewer />
       </Box>
       <footer>

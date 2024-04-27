@@ -18,7 +18,10 @@ export default function Footer() {
         bgcolor: theme.palette.mode === "dark" ? theme.palette.grey[900] : theme.palette.primary.main,
         padding: "20px",
       }}>
-      <Typography color="textSecondary" variant="subtitle2" component="span">
+      <Typography
+        color={theme.palette.mode === "dark" ? "textSecondary" : "white"}
+        variant="subtitle2"
+        component="span">
         © 2024 Health Team Admin
       </Typography>
     </Box>
