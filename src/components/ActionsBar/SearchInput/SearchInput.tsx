@@ -10,7 +10,7 @@ export default function SearchInput() {
         id="free-solo-demo"
         freeSolo
         options={top100Films.map((option) => option.title)}
-        renderInput={(params) => <TextField {...params} label="Search Staff" />}
+        renderInput={(params) => <TextField {...params} label="Search Staff"/>}
       />
     </Stack>
   );

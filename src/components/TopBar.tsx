@@ -15,7 +15,7 @@ export default function SearchAppBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <LocalHospitalIcon sx={{ mr: 2 }} />
+          <LocalHospitalIcon color="primary" sx={{ mr: 2 }} />
           <Typography variant={matches ? "h4" : "h6"} noWrap component="h1" sx={{ flexGrow: 1 }}>
             Health Team Admin
           </Typography>
