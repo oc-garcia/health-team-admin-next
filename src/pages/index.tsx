@@ -11,7 +11,7 @@ export default function Home() {
         display: "flex",
         flexDirection: "column",
         gap: "1rem",
-        height: "100vh",
+        minHeight: "100vh",
         bgcolor: (theme) => theme.palette.background.default,
       }}>
       <header>
