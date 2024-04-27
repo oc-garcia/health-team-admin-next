@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import { useTheme } from "@emotion/react";
+import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
 
 export default function SearchAppBar() {
