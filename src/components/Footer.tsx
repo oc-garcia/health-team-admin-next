@@ -1,11 +1,10 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { alpha, styled, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import { Typography } from "@mui/material";
 
 export default function Footer() {
   const theme = useTheme();
-  const FooterContainer = styled("div")(({ theme }) => ({}));
 
   return (
     <Box

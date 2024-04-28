@@ -16,6 +16,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/ActionsBar/SearchInput"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/ActionsBar/SearchInput", "src/firebase/firebase.ts", "src/components/ActionsBar/StaffForm"],
   "exclude": ["node_modules"]
 }

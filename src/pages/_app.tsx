@@ -1,13 +1,16 @@
 import "@/styles/globals.css";
 import { AppCacheProvider } from "@mui/material-nextjs/v13-pagesRouter";
+import { QueryClient, QueryClientProvider } from "react-query";
 import type { AppProps } from "next/app";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import Head from "next/head";
 import { useMediaQuery } from "@mui/material";
+import Head from "next/head";
 import React from "react";
 
 export default function MyApp(props: AppProps) {
   const { Component, pageProps } = props;
+
+  const queryClient = new QueryClient();
 
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
@@ -34,10 +37,11 @@ export default function MyApp(props: AppProps) {
           href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
         />
       </Head>
-
-      <ThemeProvider theme={theme}>
-        <Component {...pageProps} />
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </QueryClientProvider>
     </AppCacheProvider>
   );
 }
