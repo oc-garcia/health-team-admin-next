@@ -6,44 +6,57 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import db from "@/db/mockdata.json";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { Button, FormControlLabel, Switch } from "@mui/material";
 
-function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
-  return { name, calories, fat, carbs, protein };
-}
+export default function StaffViewer() {
+  const [staff, setStaff] = React.useState(db.data);
 
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-];
+  const handleStatusChange = (id: number) => {
+    const newStaff = staff.map((staffMember) =>
+      staffMember.id === id ? { ...staffMember, status: !staffMember.status } : staffMember
+    );
+    setStaff(newStaff);
+  };
 
-export default function BasicTable() {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell>Specialty</TableCell>
+            <TableCell>Service Area</TableCell>
+            <TableCell>Actions</TableCell>
+            <TableCell>Status</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+          {staff.map((staffMember) => (
+            <TableRow key={staffMember.personalInformation.name}>
               <TableCell component="th" scope="row">
-                {row.name}
+                {staffMember.personalInformation.name}
               </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
+              <TableCell>{staffMember.professionalInformation.specialty}</TableCell>
+              <TableCell>{staffMember.professionalInformation.serviceArea}</TableCell>
+              <TableCell>
+                <div className="flex gap-2 items-center ">
+                  <Button size="small" variant="outlined" color="info" startIcon={<EditIcon />}>
+                    Edit
+                  </Button>
+                  <Button size="small" variant="outlined" color="error" startIcon={<DeleteIcon />}>
+                    Delete
+                  </Button>
+                </div>
+              </TableCell>
+              <TableCell>
+                <FormControlLabel
+                  control={<Switch checked={staffMember.status} onChange={() => handleStatusChange(staffMember.id)} />}
+                  label={staffMember.status ? "Active" : "Inactive"}
+                />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

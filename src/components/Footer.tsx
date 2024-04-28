@@ -16,7 +16,7 @@ export default function Footer() {
         justifyContent: "center",
         flexDirection: "column",
         bgcolor: theme.palette.mode === "dark" ? theme.palette.grey[900] : theme.palette.primary.main,
-        paddingBottom: "30px",
+        paddingBottom: "10px",
         paddingTop: "10px",
       }}>
       <Typography
