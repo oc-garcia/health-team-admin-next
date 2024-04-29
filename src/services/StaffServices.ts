@@ -24,13 +24,6 @@ export const StaffServices = {
       setStaff(staffData);
     });
   },
-  async updateStaffStatus(id: string, status: boolean) {
-    try {
-      await axios.patch(`/api/staff/${id}`, { status });
-    } catch (error) {
-      console.error(error);
-    }
-  },
   async updateStaff(staff: IStaff) {
     try {
       const response = await axios.patch(`/api/staff/${staff.id}`, staff);

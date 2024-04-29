@@ -84,7 +84,15 @@ export default function StaffViewer() {
                 </TableCell>
                 <TableCell>
                   <FormControlLabel
-                    control={<Switch checked={staffMember.status} />}
+                    control={
+                      <Switch
+                        checked={staffMember.status}
+                        onChange={() => {
+                          staffMember.status = !staffMember.status;
+                          StaffServices.updateStaff(staffMember);
+                        }}
+                      />
+                    }
                     label={staffMember.status ? "Active" : "Inactive"}
                   />
                 </TableCell>
@@ -110,7 +118,7 @@ export default function StaffViewer() {
           </Box>
         </DialogTitle>
         <DialogContent>
-          <StaffForm editInitialValues={selectedStaff} />
+          <StaffForm editInitialValues={selectedStaff} handleClose={handleClose} />
         </DialogContent>
       </Dialog>
     </TableContainer>

@@ -97,9 +97,10 @@ const newStaffInicialValues = {
 
 interface StaffFormProps {
   editInitialValues?: IStaff;
+  handleClose: () => void;
 }
 
-const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues }) => {
+const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose }) => {
   const theme = useTheme();
 
   const getInitialValues = () => editInitialValues || newStaffInicialValues;
@@ -113,6 +114,7 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues }) => {
       } else {
         StaffServices.createStaff(values);
       }
+      handleClose();
     },
   });
   return (

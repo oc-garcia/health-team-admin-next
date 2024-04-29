@@ -52,7 +52,7 @@ export default function ActionsBar() {
           </Box>
         </DialogTitle>
         <DialogContent>
-          <StaffForm />
+          <StaffForm handleClose={handleClose} />
         </DialogContent>
       </Dialog>
     </Card>
