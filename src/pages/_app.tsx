@@ -14,6 +14,13 @@ export default function MyApp(props: AppProps) {
 
   const [themeMode, setThemeMode] = React.useState<PaletteMode>("light");
 
+  React.useEffect(() => {
+    const savedTheme = window.localStorage.getItem("theme");
+    if (savedTheme) {
+      setThemeMode(savedTheme as PaletteMode);
+    }
+  }, []);
+
   const theme = React.useMemo(
     () =>
       createTheme({
@@ -25,7 +32,11 @@ export default function MyApp(props: AppProps) {
   );
 
   const toggleTheme = () => {
-    setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+    setThemeMode((prevMode) => {
+      const newMode = prevMode === "light" ? "dark" : "light";
+      window.localStorage.setItem("theme", newMode);
+      return newMode;
+    });
   };
 
   pageProps = { ...pageProps, toggleTheme };

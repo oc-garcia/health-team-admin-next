@@ -22,6 +22,7 @@ import {
   IconButton,
   Slide,
   Switch,
+  TablePagination,
   Typography,
 } from "@mui/material";
 import { IStaff } from "@/interfaces/IStaff";
@@ -52,6 +53,11 @@ export default function StaffViewer() {
   const [openDelete, setOpenDelete] = React.useState(false);
 
   const [selectedStaff, setSelectedStaff] = React.useState<IStaff | undefined>(undefined);
+
+  const [page, setPage] = React.useState(0);
+
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
   const handleOpenForm = (value: IStaff) => {
     setOpenForm(true);
     setSelectedStaff(value);
@@ -82,6 +88,15 @@ export default function StaffViewer() {
   const handleCloseCard = () => {
     setOpenCard(false);
     setTimeout(() => setSelectedStaff(undefined), 500);
+  };
+
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   React.useEffect(() => {
@@ -117,7 +132,7 @@ export default function StaffViewer() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {staff.map((staffMember) => (
+            {staff.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((staffMember) => (
               <TableRow key={staffMember.id}>
                 <TableCell component="th" scope="row">
                   {staffMember.personalInformation.name}
@@ -157,6 +172,15 @@ export default function StaffViewer() {
               </TableRow>
             ))}
           </TableBody>
+          <TablePagination
+            rowsPerPageOptions={[10, 15, 25]}
+            component="div"
+            count={staff.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </Table>
       )}
       <Dialog open={openForm}>

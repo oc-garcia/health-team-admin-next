@@ -168,7 +168,7 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
     initialValues: getInitialValues(),
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      values.professionalInformation.photos = [...values.professionalInformation.photos, ...photoArray];
+      values.professionalInformation.photos = [...photoArray];
       if (editInitialValues) {
         if (values.professionalInformation.photos.length === 0) {
           setOpenPhotoSnackbar(true);
