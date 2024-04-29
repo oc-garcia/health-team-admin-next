@@ -13,7 +13,9 @@ import {
   Box,
   Button,
   Dialog,
+  DialogActions,
   DialogContent,
+  DialogContentText,
   DialogTitle,
   FormControlLabel,
   IconButton,
@@ -29,19 +31,30 @@ import CloseIcon from "@mui/icons-material/Close";
 export default function StaffViewer() {
   const [staff, setStaff] = React.useState<IStaff[]>([]);
 
-  const [open, setOpen] = React.useState(false);
+  const [openForm, setOpenForm] = React.useState(false);
+
+  const [openDelete, setOpenDelete] = React.useState(false);
 
   const [selectedStaff, setSelectedStaff] = React.useState<IStaff | undefined>(undefined);
-  const handleOpen = (value: IStaff) => {
-    setOpen(true);
+  const handleOpenForm = (value: IStaff) => {
+    setOpenForm(true);
     setSelectedStaff(value);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseForm = () => {
+    setOpenForm(false);
     setSelectedStaff(undefined);
   };
-  const theme = useTheme();
+
+  const handleOpenDelete = (value: IStaff) => {
+    setOpenDelete(true);
+    setSelectedStaff(value);
+  };
+
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+    setTimeout(() => setSelectedStaff(undefined), 500);
+  };
 
   React.useEffect(() => {
     StaffServices.getStaff(setStaff);
@@ -74,11 +87,11 @@ export default function StaffViewer() {
                 <TableCell>{staffMember.professionalInformation.serviceArea}</TableCell>
                 <TableCell>
                   <div className="flex gap-2 items-center ">
-                    <Button onClick={() => handleOpen(staffMember)} size="small" variant="outlined" color="info">
+                    <Button onClick={() => handleOpenForm(staffMember)} size="small" variant="outlined" color="info">
                       <EditIcon />
                     </Button>
                     <Button size="small" variant="outlined" color="error">
-                      <DeleteIcon />
+                      <DeleteIcon onClick={() => handleOpenDelete(staffMember)} />
                     </Button>
                   </div>
                 </TableCell>
@@ -101,7 +114,7 @@ export default function StaffViewer() {
           </TableBody>
         </Table>
       )}
-      <Dialog open={open}>
+      <Dialog open={openForm}>
         <DialogTitle>
           <Box
             sx={{
@@ -112,14 +125,41 @@ export default function StaffViewer() {
               gap: "1rem",
             }}>
             <p>Edit Staff</p>
-            <IconButton aria-label="close" onClick={handleClose}>
+            <IconButton aria-label="close" onClick={handleCloseForm}>
               <CloseIcon />
             </IconButton>
           </Box>
         </DialogTitle>
         <DialogContent>
-          <StaffForm editInitialValues={selectedStaff} handleClose={handleClose} />
+          <StaffForm editInitialValues={selectedStaff} handleClose={handleCloseForm} />
         </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={openDelete}
+        onClose={handleCloseDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Do you really want to delete {selectedStaff?.personalInformation.name}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDelete}>Cancel</Button>
+          <Button
+            color="error"
+            onClick={() => {
+              if (selectedStaff && selectedStaff.id) {
+                StaffServices.deleteStaff(selectedStaff.id);
+                handleCloseDelete();
+              }
+            }}
+            autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
       </Dialog>
     </TableContainer>
   );

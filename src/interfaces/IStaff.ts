@@ -2,7 +2,7 @@ interface IStaff {
   personalInformation: IPersonalInformation;
   professionalInformation: IProfessionalInformation;
   status: boolean;
-  id?: string;
+  id?: string 
 }
 
 interface IPersonalInformation {

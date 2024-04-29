@@ -32,4 +32,12 @@ export const StaffServices = {
       console.error(error);
     }
   },
+  async deleteStaff(id: string) {
+    try {
+      const response = await axios.delete(`/api/staff/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
 };
