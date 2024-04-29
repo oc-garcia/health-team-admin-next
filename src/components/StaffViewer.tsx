@@ -96,6 +96,7 @@ export default function StaffViewer() {
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>Specialty</TableCell>
+              <TableCell>Location</TableCell>
               <TableCell>Service Area Radius (km)</TableCell>
               <TableCell>Actions</TableCell>
               <TableCell>Status</TableCell>
@@ -108,6 +109,9 @@ export default function StaffViewer() {
                   {staffMember.personalInformation.name}
                 </TableCell>
                 <TableCell>{staffMember.professionalInformation.specialty}</TableCell>
+                <TableCell>
+                  {staffMember.personalInformation.address.city}, {staffMember.personalInformation.address.neighborhood}
+                </TableCell>
                 <TableCell>{staffMember.professionalInformation.serviceArea}</TableCell>
                 <TableCell>
                   <div className="flex gap-2 items-center ">
