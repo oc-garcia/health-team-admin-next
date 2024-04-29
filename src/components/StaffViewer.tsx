@@ -61,9 +61,7 @@ export default function StaffViewer() {
                 </TableCell>
                 <TableCell>
                   <FormControlLabel
-                    control={
-                      <Switch checked={staffMember.status} onChange={() => handleStatusChange(staffMember.id)} />
-                    }
+                    control={<Switch checked={staffMember.status} />}
                     label={staffMember.status ? "Active" : "Inactive"}
                   />
                 </TableCell>

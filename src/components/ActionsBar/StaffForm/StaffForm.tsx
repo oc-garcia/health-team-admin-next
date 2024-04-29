@@ -1,6 +1,39 @@
 import { Formik, Field, Form, useFormik } from "formik";
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import * as Yup from "yup";
+import { useTheme } from "@mui/material/styles";
+
+const medicalSpecialties = [
+  "Allergy and Immunology",
+  "Anesthesiology",
+  "Cardiology",
+  "Dermatology",
+  "Emergency Medicine",
+  "Endocrinology",
+  "Family Medicine",
+  "Gastroenterology",
+  "Genetics",
+  "Geriatrics",
+  "Hematology",
+  "Infectious Disease",
+  "Internal Medicine",
+  "Medical Oncology",
+  "Nephrology",
+  "Neurology",
+  "Neurosurgery",
+  "Obstetrics and Gynecology",
+  "Ophthalmology",
+  "Pathology",
+  "Pediatrics",
+  "Physical Medicine and Rehabilitation",
+  "Plastic Surgery",
+  "Preventive Medicine",
+  "Psychiatry",
+  "Radiation Oncology",
+  "Pulmonary Disease",
+  "Rheumatology",
+  "Urology",
+];
 
 const validationSchema = Yup.object().shape({
   personalInformation: Yup.object().shape({
@@ -61,6 +94,8 @@ const newStaffInicialValues = {
 };
 
 const StaffForm = () => {
+  const theme = useTheme();
+
   const formik = useFormik({
     initialValues: newStaffInicialValues,
     validationSchema: validationSchema,
@@ -78,6 +113,9 @@ const StaffForm = () => {
             id="personalInformation.name"
             name="personalInformation.name"
             label="Name"
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={formik.values.personalInformation.name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -91,6 +129,9 @@ const StaffForm = () => {
             id="personalInformation.cpf"
             name="personalInformation.cpf"
             label="CPF"
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={formik.values.personalInformation.cpf}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -104,6 +145,9 @@ const StaffForm = () => {
             id="personalInformation.rg"
             name="personalInformation.rg"
             label="RG"
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={formik.values.personalInformation.rg}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -118,6 +162,10 @@ const StaffForm = () => {
             name="personalInformation.birthDate"
             label="Birth Date"
             type="date"
+            className={theme.palette.mode === "light" ? "" : "dark-theme"}
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={formik.values.personalInformation.birthDate}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -133,6 +181,9 @@ const StaffForm = () => {
             id="personalInformation.email"
             name="personalInformation.email"
             label="Email"
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={formik.values.personalInformation.email}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -146,6 +197,9 @@ const StaffForm = () => {
             id="personalInformation.phone"
             name="personalInformation.phone"
             label="Phone"
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={formik.values.personalInformation.phone}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -156,20 +210,119 @@ const StaffForm = () => {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            id="personalInformation.address.street"
-            name="personalInformation.address.street"
-            label="Street"
-            value={formik.values.personalInformation.address.street}
+            id="personalInformation.address.zipCode"
+            name="personalInformation.address.zipCode"
+            label="Zip Code"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            value={formik.values.personalInformation.address.zipCode}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={
-              formik.touched.personalInformation?.address?.street &&
-              Boolean(formik.errors.personalInformation?.address?.street)
+              formik.touched.personalInformation?.address?.zipCode &&
+              Boolean(formik.errors.personalInformation?.address?.zipCode)
             }
             helperText={
-              formik.touched.personalInformation?.address?.street && formik.errors.personalInformation?.address?.street
+              formik.touched.personalInformation?.address?.zipCode &&
+              formik.errors.personalInformation?.address?.zipCode
             }
           />
+        </Grid>
+        <Grid item xs={12}>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                id="personalInformation.address.street"
+                name="personalInformation.address.street"
+                label="Street"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={formik.values.personalInformation.address.street}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.personalInformation?.address?.street &&
+                  Boolean(formik.errors.personalInformation?.address?.street)
+                }
+                helperText={
+                  formik.touched.personalInformation?.address?.street &&
+                  formik.errors.personalInformation?.address?.street
+                }
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                id="personalInformation.address.neighborhood"
+                name="personalInformation.address.neighborhood"
+                label="Neighborhood"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={formik.values.personalInformation.address.neighborhood}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.personalInformation?.address?.neighborhood &&
+                  Boolean(formik.errors.personalInformation?.address?.neighborhood)
+                }
+                helperText={
+                  formik.touched.personalInformation?.address?.neighborhood &&
+                  formik.errors.personalInformation?.address?.neighborhood
+                }
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={12}>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                id="personalInformation.address.city"
+                name="personalInformation.address.city"
+                label="City"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={formik.values.personalInformation.address.city}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.personalInformation?.address?.city &&
+                  Boolean(formik.errors.personalInformation?.address?.city)
+                }
+                helperText={
+                  formik.touched.personalInformation?.address?.city && formik.errors.personalInformation?.address?.city
+                }
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                id="personalInformation.address.state"
+                name="personalInformation.address.state"
+                label="State"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={formik.values.personalInformation.address.state}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                  formik.touched.personalInformation?.address?.state &&
+                  Boolean(formik.errors.personalInformation?.address?.state)
+                }
+                helperText={
+                  formik.touched.personalInformation?.address?.state &&
+                  formik.errors.personalInformation?.address?.state
+                }
+              />
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item xs={12}>
           <TextField
@@ -177,6 +330,9 @@ const StaffForm = () => {
             id="personalInformation.address.number"
             name="personalInformation.address.number"
             label="Number"
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={formik.values.personalInformation.address.number}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -192,83 +348,12 @@ const StaffForm = () => {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            id="personalInformation.address.neighborhood"
-            name="personalInformation.address.neighborhood"
-            label="Neighborhood"
-            value={formik.values.personalInformation.address.neighborhood}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={
-              formik.touched.personalInformation?.address?.neighborhood &&
-              Boolean(formik.errors.personalInformation?.address?.neighborhood)
-            }
-            helperText={
-              formik.touched.personalInformation?.address?.neighborhood &&
-              formik.errors.personalInformation?.address?.neighborhood
-            }
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            id="personalInformation.address.city"
-            name="personalInformation.address.city"
-            label="City"
-            value={formik.values.personalInformation.address.city}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={
-              formik.touched.personalInformation?.address?.city &&
-              Boolean(formik.errors.personalInformation?.address?.city)
-            }
-            helperText={
-              formik.touched.personalInformation?.address?.city && formik.errors.personalInformation?.address?.city
-            }
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            id="personalInformation.address.state"
-            name="personalInformation.address.state"
-            label="State"
-            value={formik.values.personalInformation.address.state}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={
-              formik.touched.personalInformation?.address?.state &&
-              Boolean(formik.errors.personalInformation?.address?.state)
-            }
-            helperText={
-              formik.touched.personalInformation?.address?.state && formik.errors.personalInformation?.address?.state
-            }
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            id="personalInformation.address.zipCode"
-            name="personalInformation.address.zipCode"
-            label="Zip Code"
-            value={formik.values.personalInformation.address.zipCode}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={
-              formik.touched.personalInformation?.address?.zipCode &&
-              Boolean(formik.errors.personalInformation?.address?.zipCode)
-            }
-            helperText={
-              formik.touched.personalInformation?.address?.zipCode &&
-              formik.errors.personalInformation?.address?.zipCode
-            }
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
             id="professionalInformation.crm"
             name="professionalInformation.crm"
             label="CRM"
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={formik.values.professionalInformation.crm}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -282,6 +367,9 @@ const StaffForm = () => {
             id="professionalInformation.cfm"
             name="professionalInformation.cfm"
             label="CFM"
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={formik.values.professionalInformation.cfm}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -290,22 +378,28 @@ const StaffForm = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            fullWidth
-            id="professionalInformation.specialty"
-            name="professionalInformation.specialty"
-            label="Specialty"
-            value={formik.values.professionalInformation.specialty}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={
-              formik.touched.professionalInformation?.specialty &&
-              Boolean(formik.errors.professionalInformation?.specialty)
-            }
-            helperText={
-              formik.touched.professionalInformation?.specialty && formik.errors.professionalInformation?.specialty
-            }
-          />
+          <FormControl fullWidth>
+            <InputLabel id="professionalInformation.appointmentType">Specialty</InputLabel>
+            <Select
+              labelId="professionalInformation.appointmentType"
+              id="professionalInformation.specialty"
+              name="professionalInformation.specialty"
+              label="Specialty"
+              value={formik.values.professionalInformation.specialty}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={
+                formik.touched.professionalInformation?.specialty &&
+                Boolean(formik.errors.professionalInformation?.specialty)
+              }>
+              {medicalSpecialties.map((specialty) => (
+                <MenuItem value={specialty}>{specialty}</MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>
+              {formik.touched.professionalInformation?.specialty && formik.errors.professionalInformation?.specialty}
+            </FormHelperText>
+          </FormControl>
         </Grid>
         <Grid item xs={12}>
           <TextField
@@ -313,6 +407,9 @@ const StaffForm = () => {
             id="professionalInformation.hourConsultationPrice"
             name="professionalInformation.hourConsultationPrice"
             label="Hour Consultation Price"
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={formik.values.professionalInformation.hourConsultationPrice}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -332,6 +429,9 @@ const StaffForm = () => {
             id="professionalInformation.serviceArea"
             name="professionalInformation.serviceArea"
             label="Service Area"
+            InputLabelProps={{
+              shrink: true,
+            }}
             value={formik.values.professionalInformation.serviceArea}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -345,23 +445,28 @@ const StaffForm = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            fullWidth
-            id="professionalInformation.appointmentType"
-            name="professionalInformation.appointmentType"
-            label="Appointment Type"
-            value={formik.values.professionalInformation.appointmentType}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={
-              formik.touched.professionalInformation?.appointmentType &&
-              Boolean(formik.errors.professionalInformation?.appointmentType)
-            }
-            helperText={
-              formik.touched.professionalInformation?.appointmentType &&
-              formik.errors.professionalInformation?.appointmentType
-            }
-          />
+          <FormControl fullWidth>
+            <InputLabel id="professionalInformation.appointmentType">Appointment Type</InputLabel>
+            <Select
+              labelId="professionalInformation.appointmentType"
+              id="professionalInformation.appointmentType"
+              name="professionalInformation.appointmentType"
+              label="Appointment Type"
+              value={formik.values.professionalInformation.appointmentType}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={
+                formik.touched.professionalInformation?.appointmentType &&
+                Boolean(formik.errors.professionalInformation?.appointmentType)
+              }>
+              <MenuItem value={"In person"}>In person</MenuItem>
+              <MenuItem value={"Telemedicine"}>Telemedicine</MenuItem>
+            </Select>
+            <FormHelperText>
+              {formik.touched.professionalInformation?.appointmentType &&
+                formik.errors.professionalInformation?.appointmentType}
+            </FormHelperText>
+          </FormControl>
         </Grid>
 
         <Grid item xs={12}>

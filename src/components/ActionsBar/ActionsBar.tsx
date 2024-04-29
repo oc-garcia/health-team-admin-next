@@ -7,6 +7,8 @@ import DialogActions from "@mui/material/DialogActions";
 import SearchInput from "./SearchInput/SearchInput";
 import { useState } from "react";
 import StaffForm from "./StaffForm/StaffForm";
+import { Box, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function ActionsBar() {
   const [open, setOpen] = useState(false);
@@ -33,8 +35,22 @@ export default function ActionsBar() {
       </Button>
       <SearchInput />
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add New Staff</DialogTitle>
+      <Dialog open={open}>
+        <DialogTitle>
+          <Box
+            sx={{
+              padding: "0px 10px",
+              display: "flex",
+              alignItems: "center ",
+              justifyContent: "space-between",
+              gap: "1rem",
+            }}>
+            <p>Add New Staff</p>
+            <IconButton aria-label="close" onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
         <DialogContent>
           <StaffForm />
         </DialogContent>

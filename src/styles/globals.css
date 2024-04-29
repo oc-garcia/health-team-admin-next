@@ -13,3 +13,9 @@ body {
   overflow-x: hidden;
   min-height: 100vh;
 }
+
+
+
+.dark-theme input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
