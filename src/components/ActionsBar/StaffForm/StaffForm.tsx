@@ -1,9 +1,27 @@
 import { useFormik } from "formik";
 import { Button, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import * as Yup from "yup";
 import { useTheme } from "@mui/material/styles";
 import { StaffServices } from "@/services/StaffServices";
 import { IStaff } from "@/interfaces/IStaff";
+import { AddressServices } from "@/services/AddressServices";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { storage } from "@/firebase/firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useState } from "react";
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 const medicalSpecialties = [
   "Allergy and Immunology",
@@ -59,7 +77,7 @@ const validationSchema = Yup.object().shape({
     cfm: Yup.number().required("Required"),
     specialty: Yup.string().required("Required"),
     hourConsultationPrice: Yup.number().required("Required"),
-    serviceArea: Yup.string().required("Required"),
+    serviceArea: Yup.number().required("Required"),
     appointmentType: Yup.string().required("Required"),
     photos: Yup.array().of(Yup.string().required("Required")),
   }),
@@ -88,7 +106,7 @@ const newStaffInicialValues = {
     cfm: undefined,
     specialty: "",
     hourConsultationPrice: undefined,
-    serviceArea: "",
+    serviceArea: undefined,
     appointmentType: "",
     photos: [],
   },
@@ -101,6 +119,8 @@ interface StaffFormProps {
 }
 
 const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose }) => {
+  const [photoArray, setPhotoArray] = useState<string[]>(editInitialValues?.professionalInformation.photos || []);
+
   const theme = useTheme();
 
   const getInitialValues = () => editInitialValues || newStaffInicialValues;
@@ -109,6 +129,7 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
     initialValues: getInitialValues(),
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      values.professionalInformation.photos = photoArray;
       if (editInitialValues) {
         StaffServices.updateStaff(values);
       } else {
@@ -117,10 +138,42 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
       handleClose();
     },
   });
+
+  const handleZipCodeChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const zipCode = event.target.value;
+    formik.handleChange(event);
+    if (/^\d{8}$/.test(zipCode)) {
+      const address = await AddressServices.getAddress(zipCode);
+      if (address) {
+        formik.setFieldValue("personalInformation.address.street", address.logradouro);
+        formik.setFieldValue("personalInformation.address.neighborhood", address.bairro);
+        formik.setFieldValue("personalInformation.address.city", address.localidade);
+        formik.setFieldValue("personalInformation.address.state", address.uf);
+      }
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const urls = [];
+      const storageRef = ref(storage, "photos/" + file.name);
+      const snapshot = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      urls.push(url);
+      setPhotoArray([...photoArray, ...urls]);
+    }
+  };
   return (
     <form onSubmit={formik.handleSubmit}>
       <Grid container spacing={2}>
         <Grid item xs={12} sx={{ mt: 2 }}>
+          <Button component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<CloudUploadIcon />}>
+            Upload photo
+            <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
           <TextField
             fullWidth
             id="personalInformation.name"
@@ -230,7 +283,7 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
               shrink: true,
             }}
             value={formik.values.personalInformation.address.zipCode}
-            onChange={formik.handleChange}
+            onChange={handleZipCodeChange}
             onBlur={formik.handleBlur}
             error={
               formik.touched.personalInformation?.address?.zipCode &&
@@ -443,7 +496,8 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
             fullWidth
             id="professionalInformation.serviceArea"
             name="professionalInformation.serviceArea"
-            label="Service Area"
+            label="Service Area Radius (km)"
+            type="number"
             InputLabelProps={{
               shrink: true,
             }}

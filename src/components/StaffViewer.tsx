@@ -72,7 +72,7 @@ export default function StaffViewer() {
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>Specialty</TableCell>
-              <TableCell>Service Area</TableCell>
+              <TableCell>Service Area Radius (km)</TableCell>
               <TableCell>Actions</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>

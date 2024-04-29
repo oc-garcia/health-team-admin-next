@@ -2,7 +2,7 @@ interface IStaff {
   personalInformation: IPersonalInformation;
   professionalInformation: IProfessionalInformation;
   status: boolean;
-  id?: string 
+  id?: string;
 }
 
 interface IPersonalInformation {
@@ -20,7 +20,7 @@ interface IProfessionalInformation {
   cfm: number | undefined;
   specialty: string;
   hourConsultationPrice: number | undefined;
-  serviceArea: string;
+  serviceArea: number | undefined;
   appointmentType: string;
   photos: string[];
 }
