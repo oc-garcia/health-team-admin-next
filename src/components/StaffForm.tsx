@@ -158,17 +158,17 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
     initialValues: getInitialValues(),
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      if (values.personalInformation.cpf) {
-        const cpfExists = await StaffServices.checkCpf(values.personalInformation.cpf);
-        if (cpfExists.exists) {
-          setOpenSnackbar(true);
-          return;
-        }
-      }
       values.professionalInformation.photos = photoArray;
       if (editInitialValues) {
         StaffServices.updateStaff(values);
       } else {
+        if (values.personalInformation.cpf) {
+          const cpfExists = await StaffServices.checkCpf(values.personalInformation.cpf);
+          if (cpfExists.exists) {
+            setOpenSnackbar(true);
+            return;
+          }
+        }
         StaffServices.createStaff(values);
       }
       handleClose();
