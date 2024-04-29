@@ -30,6 +30,8 @@ import InfoIcon from "@mui/icons-material/Info";
 import StaffForm from "./StaffForm";
 import CloseIcon from "@mui/icons-material/Close";
 import { TransitionProps } from "@mui/material/transitions";
+import { storage } from "@/firebase/firebase";
+import { deleteObject, ref } from "firebase/storage";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -83,6 +85,16 @@ export default function StaffViewer() {
   React.useEffect(() => {
     StaffServices.getStaff(setStaff);
   }, []);
+
+  const handleDeletePhoto = async (staff: IStaff, index: number) => {
+    const photos = [...staff.professionalInformation.photos];
+    const photoUrl = photos[index];
+    photos.splice(index, 1);
+    staff.professionalInformation.photos = photos;
+    StaffServices.updateStaff(staff);
+    const photoRef = ref(storage, photoUrl);
+    await deleteObject(photoRef);
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -171,7 +183,7 @@ export default function StaffViewer() {
         onClose={handleCloseDelete}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Confirm deletion"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Do you really want to delete {selectedStaff?.personalInformation.name}?
@@ -234,9 +246,24 @@ export default function StaffViewer() {
                 <Typography sx={{ marginTop: "1rem" }} variant="h6">
                   Photos
                 </Typography>
-                {selectedStaff.professionalInformation.photos.map((photo, index) => (
-                  <img key={index} src={photo} alt="Staff" style={{ width: "100px", height: "100px" }} />
-                ))}
+                <div className="flex items-center gap-2">
+                  {selectedStaff.professionalInformation.photos.length > 0 ? (
+                    selectedStaff.professionalInformation.photos.map((photo, index) => (
+                      <div key={index} style={{ position: "relative", display: "inline-block" }}>
+                        <img src={photo} alt="Staff" style={{ width: "100px", height: "100px" }} />
+                        <IconButton
+                          size="small"
+                          color="error"
+                          style={{ position: "absolute", top: 0, right: 0 }}
+                          onClick={() => handleDeletePhoto(selectedStaff, index)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </div>
+                    ))
+                  ) : (
+                    <Typography>No photos registered</Typography>
+                  )}
+                </div>
               </div>
             )}
           </DialogContentText>
