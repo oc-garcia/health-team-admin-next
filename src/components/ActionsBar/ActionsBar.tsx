@@ -3,8 +3,6 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import SearchInput from "./SearchInput/SearchInput";
 import { useState } from "react";
 import StaffForm from "./StaffForm/StaffForm";
 import { Box, IconButton } from "@mui/material";
@@ -33,7 +31,6 @@ export default function ActionsBar() {
       <Button variant="contained" onClick={handleOpen}>
         Add Staff
       </Button>
-      <SearchInput />
 
       <Dialog open={open}>
         <DialogTitle>
