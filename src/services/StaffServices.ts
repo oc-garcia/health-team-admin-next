@@ -1,7 +1,7 @@
 import { db } from "@/firebase/firebase";
 import { IStaff } from "@/interfaces/IStaff";
 import axios from "axios";
-import { collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { collection, getDocs, onSnapshot, query, where } from "firebase/firestore";
 
 export const StaffServices = {
   async createStaff(staff: IStaff) {
@@ -23,6 +23,16 @@ export const StaffServices = {
       });
       setStaff(staffData);
     });
+  },
+  async checkCpf(cpf: number) {
+    const q = query(collection(db, "staff"), where("personalInformation.cpf", "==", cpf));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      return { exists: true };
+    } else {
+      return { exists: false };
+    }
   },
   async updateStaff(staff: IStaff) {
     try {

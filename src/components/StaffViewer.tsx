@@ -27,8 +27,7 @@ import {
 import { IStaff } from "@/interfaces/IStaff";
 import { StaffServices } from "@/services/StaffServices";
 import InfoIcon from "@mui/icons-material/Info";
-import { useTheme } from "@mui/material/styles";
-import StaffForm from "./ActionsBar/StaffForm/StaffForm";
+import StaffForm from "./StaffForm";
 import CloseIcon from "@mui/icons-material/Close";
 import { TransitionProps } from "@mui/material/transitions";
 
@@ -204,6 +203,9 @@ export default function StaffViewer() {
                 <Typography variant="h6">Personal Information</Typography>
                 <Typography>Name: {selectedStaff.personalInformation.name}</Typography>
                 <Typography>Email: {selectedStaff.personalInformation.email}</Typography>
+                <Typography>CPF: {selectedStaff.personalInformation.cpf}</Typography>
+                <Typography>RG: {selectedStaff.personalInformation.rg}</Typography>
+                <Typography>Birth Date: {selectedStaff.personalInformation.birthDate}</Typography>
                 <Typography>Phone: {selectedStaff.personalInformation.phone}</Typography>
                 <Typography>
                   Address: {selectedStaff.personalInformation.address.street},{" "}

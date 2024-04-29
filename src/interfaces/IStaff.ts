@@ -9,7 +9,7 @@ interface IPersonalInformation {
   name: string;
   cpf: number | undefined;
   rg: number | undefined;
-  birthDate: Date | undefined;
+  birthDate: string | undefined;
   email: string;
   phone: number | undefined;
   address: IAddress;

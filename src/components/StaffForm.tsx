@@ -1,5 +1,16 @@
 import { useFormik } from "formik";
-import { Button, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Alert,
+  Button,
+  FormControl,
+  FormHelperText,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Snackbar,
+  TextField,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import * as Yup from "yup";
 import { useTheme } from "@mui/material/styles";
@@ -9,7 +20,7 @@ import { AddressServices } from "@/services/AddressServices";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { storage } from "@/firebase/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -61,8 +72,16 @@ const validationSchema = Yup.object().shape({
     cpf: Yup.number().required("Required"),
     rg: Yup.number().required("Required"),
     birthDate: Yup.date().required("Required"),
-    email: Yup.string().email("Invalid email").required("Required"),
-    phone: Yup.number().required("Required"),
+    email: Yup.string()
+      .email("Invalid email")
+      .test("email", "Email is required when phone is not provided", function (value) {
+        const { phone } = this.parent;
+        return (phone && phone.length > 0) || (value && value.length > 0);
+      }),
+    phone: Yup.string().test("phone", "Phone is required when email is not provided", function (value) {
+      const { email } = this.parent;
+      return (email && email.length > 0) || (value && value.length > 0);
+    }),
     address: Yup.object().shape({
       street: Yup.string().required("Required"),
       number: Yup.number().required("Required"),
@@ -121,14 +140,31 @@ interface StaffFormProps {
 const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose }) => {
   const [photoArray, setPhotoArray] = useState<string[]>(editInitialValues?.professionalInformation.photos || []);
 
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
   const theme = useTheme();
 
   const getInitialValues = () => editInitialValues || newStaffInicialValues;
 
+  const cpfRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (openSnackbar) {
+      cpfRef.current?.focus();
+    }
+  }, [openSnackbar]);
+
   const formik = useFormik<IStaff>({
     initialValues: getInitialValues(),
     validationSchema: validationSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
+      if (values.personalInformation.cpf) {
+        const cpfExists = await StaffServices.checkCpf(values.personalInformation.cpf);
+        if (cpfExists.exists) {
+          setOpenSnackbar(true);
+          return;
+        }
+      }
       values.professionalInformation.photos = photoArray;
       if (editInitialValues) {
         StaffServices.updateStaff(values);
@@ -164,6 +200,14 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
       setPhotoArray([...photoArray, ...urls]);
     }
   };
+
+  const handleCloseSnackbar = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenSnackbar(false);
+  };
   return (
     <form onSubmit={formik.handleSubmit}>
       <Grid container spacing={2}>
@@ -195,6 +239,7 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
             id="personalInformation.cpf"
             name="personalInformation.cpf"
             label="CPF"
+            inputRef={cpfRef}
             InputLabelProps={{
               shrink: true,
             }}
@@ -544,6 +589,11 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
           </Button>
         </Grid>
       </Grid>
+      <Snackbar open={openSnackbar} autoHideDuration={6000}>
+        <Alert onClose={handleCloseSnackbar} severity="error">
+          CPF already exists
+        </Alert>
+      </Snackbar>
     </form>
   );
 };

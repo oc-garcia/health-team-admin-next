@@ -1,7 +1,7 @@
 import TopBar from "@/components/TopBar";
 import StaffViewer from "@/components/StaffViewer";
 import Footer from "@/components/Footer";
-import ActionsBar from "@/components/ActionsBar/ActionsBar";
+import ActionsBar from "@/components/ActionsBar";
 import { Box } from "@mui/material";
 
 export default function Home() {
