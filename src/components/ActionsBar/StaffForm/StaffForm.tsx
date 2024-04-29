@@ -1,7 +1,9 @@
-import { Formik, Field, Form, useFormik } from "formik";
+import { useFormik } from "formik";
 import { Button, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import * as Yup from "yup";
 import { useTheme } from "@mui/material/styles";
+import { StaffServices } from "@/services/StaffServices";
+import { IStaff } from "@/interfaces/IStaff";
 
 const medicalSpecialties = [
   "Allergy and Immunology",
@@ -67,43 +69,52 @@ const validationSchema = Yup.object().shape({
 const newStaffInicialValues = {
   personalInformation: {
     name: "",
-    cpf: "",
-    rg: "",
-    birthDate: "",
+    cpf: undefined,
+    rg: undefined,
+    birthDate: undefined,
     email: "",
-    phone: "",
+    phone: undefined,
     address: {
       street: "",
-      number: "",
+      number: undefined,
       neighborhood: "",
       city: "",
       state: "",
-      zipCode: "",
+      zipCode: undefined,
     },
   },
   professionalInformation: {
-    crm: "",
-    cfm: "",
+    crm: undefined,
+    cfm: undefined,
     specialty: "",
-    hourConsultationPrice: "",
+    hourConsultationPrice: undefined,
     serviceArea: "",
     appointmentType: "",
     photos: [],
   },
-  status: false,
+  status: true,
 };
 
-const StaffForm = () => {
+interface StaffFormProps {
+  editInitialValues?: IStaff;
+}
+
+const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues }) => {
   const theme = useTheme();
 
-  const formik = useFormik({
-    initialValues: newStaffInicialValues,
+  const getInitialValues = () => editInitialValues || newStaffInicialValues;
+
+  const formik = useFormik<IStaff>({
+    initialValues: getInitialValues(),
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log("Submitting form with values:", values);
+      if (editInitialValues) {
+        StaffServices.updateStaff(values);
+      } else {
+        StaffServices.createStaff(values);
+      }
     },
   });
-
   return (
     <form onSubmit={formik.handleSubmit}>
       <Grid container spacing={2}>
@@ -393,7 +404,9 @@ const StaffForm = () => {
                 Boolean(formik.errors.professionalInformation?.specialty)
               }>
               {medicalSpecialties.map((specialty) => (
-                <MenuItem value={specialty}>{specialty}</MenuItem>
+                <MenuItem key={specialty} value={specialty}>
+                  {specialty}
+                </MenuItem>
               ))}
             </Select>
             <FormHelperText>

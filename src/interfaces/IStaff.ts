@@ -2,24 +2,24 @@ interface IStaff {
   personalInformation: IPersonalInformation;
   professionalInformation: IProfessionalInformation;
   status: boolean;
-  id: string;
+  id?: string;
 }
 
 interface IPersonalInformation {
   name: string;
-  cpf: number;
-  rg: number;
-  birthDate: Date;
+  cpf: number | undefined;
+  rg: number | undefined;
+  birthDate: Date | undefined;
   email: string;
-  phone: number;
+  phone: number | undefined;
   address: IAddress;
 }
 
 interface IProfessionalInformation {
-  crm: number;
-  cfm: number;
+  crm: number | undefined;
+  cfm: number | undefined;
   specialty: string;
-  hourConsultationPrice: number;
+  hourConsultationPrice: number | undefined;
   serviceArea: string;
   appointmentType: string;
   photos: string[];
@@ -27,11 +27,11 @@ interface IProfessionalInformation {
 
 interface IAddress {
   street: string;
-  number: number;
+  number: number | undefined;
   neighborhood: string;
   city: string;
   state: string;
-  zipCode: number;
+  zipCode: number | undefined;
 }
 
 export type { IStaff, IPersonalInformation, IProfessionalInformation, IAddress };

@@ -8,16 +8,39 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { Alert, Button, FormControlLabel, Switch } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+  IconButton,
+  Switch,
+} from "@mui/material";
 import { IStaff } from "@/interfaces/IStaff";
 import { StaffServices } from "@/services/StaffServices";
 import InfoIcon from "@mui/icons-material/Info";
-import { useMutation } from "react-query";
 import { useTheme } from "@mui/material/styles";
+import StaffForm from "./ActionsBar/StaffForm/StaffForm";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function StaffViewer() {
   const [staff, setStaff] = React.useState<IStaff[]>([]);
 
+  const [open, setOpen] = React.useState(false);
+
+  const [selectedStaff, setSelectedStaff] = React.useState<IStaff | undefined>(undefined);
+  const handleOpen = (value: IStaff) => {
+    setOpen(true);
+    setSelectedStaff(value);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedStaff(undefined);
+  };
   const theme = useTheme();
 
   React.useEffect(() => {
@@ -42,8 +65,8 @@ export default function StaffViewer() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {staff.map((staffMember, index) => (
-              <TableRow key={index}>
+            {staff.map((staffMember) => (
+              <TableRow key={staffMember.id}>
                 <TableCell component="th" scope="row">
                   {staffMember.personalInformation.name}
                 </TableCell>
@@ -51,11 +74,11 @@ export default function StaffViewer() {
                 <TableCell>{staffMember.professionalInformation.serviceArea}</TableCell>
                 <TableCell>
                   <div className="flex gap-2 items-center ">
-                    <Button size="small" variant="outlined" color="info" startIcon={<EditIcon />}>
-                      Edit
+                    <Button onClick={() => handleOpen(staffMember)} size="small" variant="outlined" color="info">
+                      <EditIcon />
                     </Button>
-                    <Button size="small" variant="outlined" color="error" startIcon={<DeleteIcon />}>
-                      Delete
+                    <Button size="small" variant="outlined" color="error">
+                      <DeleteIcon />
                     </Button>
                   </div>
                 </TableCell>
@@ -70,6 +93,26 @@ export default function StaffViewer() {
           </TableBody>
         </Table>
       )}
+      <Dialog open={open}>
+        <DialogTitle>
+          <Box
+            sx={{
+              padding: "0px 10px",
+              display: "flex",
+              alignItems: "center ",
+              justifyContent: "space-between",
+              gap: "1rem",
+            }}>
+            <p>Edit Staff</p>
+            <IconButton aria-label="close" onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <StaffForm editInitialValues={selectedStaff} />
+        </DialogContent>
+      </Dialog>
     </TableContainer>
   );
 }

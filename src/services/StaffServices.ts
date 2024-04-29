@@ -31,4 +31,12 @@ export const StaffServices = {
       console.error(error);
     }
   },
+  async updateStaff(staff: IStaff) {
+    try {
+      const response = await axios.patch(`/api/staff/${staff.id}`, staff);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  },
 };
