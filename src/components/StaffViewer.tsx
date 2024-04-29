@@ -48,6 +48,8 @@ const Transition = React.forwardRef(function Transition(
 export default function StaffViewer() {
   const [staff, setStaff] = React.useState<IStaff[]>([]);
 
+  const [updatingStaffId, setUpdatingStaffId] = React.useState<string | null>(null);
+
   const [openForm, setOpenForm] = React.useState(false);
 
   const [openDelete, setOpenDelete] = React.useState(false);
@@ -160,10 +162,16 @@ export default function StaffViewer() {
                     control={
                       <Switch
                         checked={staffMember.status}
-                        onChange={() => {
+                        onChange={async () => {
+                          if (typeof staffMember.id === "undefined") {
+                            return;
+                          }
+                          setUpdatingStaffId(staffMember.id);
                           staffMember.status = !staffMember.status;
-                          StaffServices.updateStaff(staffMember);
+                          await StaffServices.updateStaff(staffMember);
+                          setUpdatingStaffId(null);
                         }}
+                        disabled={updatingStaffId === staffMember.id}
                       />
                     }
                     label={staffMember.status ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
