@@ -4,7 +4,11 @@ import Footer from "@/components/Footer";
 import ActionsBar from "@/components/ActionsBar";
 import { Box } from "@mui/material";
 
-export default function Home() {
+interface HomeProps {
+  toggleTheme: () => void;
+}
+
+export default function Home({ toggleTheme }: HomeProps) {
   return (
     <Box
       sx={{
@@ -15,7 +19,7 @@ export default function Home() {
         bgcolor: (theme) => theme.palette.background.default,
       }}>
       <header>
-        <TopBar />
+        <TopBar toggleTheme={toggleTheme} />
       </header>
       <Box
         sx={{

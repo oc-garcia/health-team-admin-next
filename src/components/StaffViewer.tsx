@@ -32,6 +32,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { TransitionProps } from "@mui/material/transitions";
 import { storage } from "@/firebase/firebase";
 import { deleteObject, ref } from "firebase/storage";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -133,8 +135,8 @@ export default function StaffViewer() {
                     <IconButton onClick={() => handleOpenForm(staffMember)} size="small" color="info">
                       <EditIcon />
                     </IconButton>
-                    <IconButton size="small" color="error">
-                      <DeleteIcon onClick={() => handleOpenDelete(staffMember)} />
+                    <IconButton onClick={() => handleOpenDelete(staffMember)} size="small" color="error">
+                      <DeleteIcon />
                     </IconButton>
                   </div>
                 </TableCell>
@@ -149,7 +151,7 @@ export default function StaffViewer() {
                         }}
                       />
                     }
-                    label={staffMember.status ? "Active" : "Inactive"}
+                    label={staffMember.status ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
                   />
                 </TableCell>
               </TableRow>
@@ -213,7 +215,7 @@ export default function StaffViewer() {
         aria-describedby="alert-dialog-slide-description">
         <DialogTitle>{"Staff Overview"}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
+          <div id="alert-dialog-slide-description">
             {selectedStaff && (
               <div>
                 <Typography variant="h6">Personal Information</Typography>
@@ -240,9 +242,8 @@ export default function StaffViewer() {
                   Hour Consultation Price: {selectedStaff.professionalInformation.hourConsultationPrice}
                 </Typography>
                 <Typography sx={{ marginTop: "1rem" }} variant="h6">
-                  Status
+                  Status {selectedStaff.status ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
                 </Typography>
-                <Typography>{selectedStaff.status ? "Active" : "Inactive"}</Typography>
                 <Typography sx={{ marginTop: "1rem" }} variant="h6">
                   Photos
                 </Typography>
@@ -266,7 +267,7 @@ export default function StaffViewer() {
                 </div>
               </div>
             )}
-          </DialogContentText>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCard}>close</Button>

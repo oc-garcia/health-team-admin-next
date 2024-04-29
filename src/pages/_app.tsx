@@ -3,26 +3,32 @@ import { AppCacheProvider } from "@mui/material-nextjs/v13-pagesRouter";
 import { QueryClient, QueryClientProvider } from "react-query";
 import type { AppProps } from "next/app";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { useMediaQuery } from "@mui/material";
 import Head from "next/head";
 import React from "react";
+import { PaletteMode } from "@mui/material";
 
 export default function MyApp(props: AppProps) {
-  const { Component, pageProps } = props;
+  let { Component, pageProps } = props;
 
   const queryClient = new QueryClient();
 
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const [themeMode, setThemeMode] = React.useState<PaletteMode>("light");
 
   const theme = React.useMemo(
     () =>
       createTheme({
         palette: {
-          mode: prefersDarkMode ? "dark" : "light",
+          mode: themeMode,
         },
       }),
-    [prefersDarkMode]
+    [themeMode]
   );
+
+  const toggleTheme = () => {
+    setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+  };
+
+  pageProps = { ...pageProps, toggleTheme };
 
   return (
     <AppCacheProvider {...props}>

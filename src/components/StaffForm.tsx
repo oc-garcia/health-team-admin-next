@@ -140,7 +140,9 @@ interface StaffFormProps {
 const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose }) => {
   const [photoArray, setPhotoArray] = useState<string[]>(editInitialValues?.professionalInformation.photos || []);
 
-  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [openCpfSnackbar, setOpenCpfSnackbar] = useState(false);
+
+  const [openPhotoSnackBar, setOpenPhotoSnackbar] = useState(false);
 
   const theme = useTheme();
 
@@ -148,26 +150,42 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
 
   const cpfRef = useRef<HTMLInputElement>(null);
 
+  const photoUploadRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
-    if (openSnackbar) {
+    if (openCpfSnackbar) {
       cpfRef.current?.focus();
     }
-  }, [openSnackbar]);
+  }, [openCpfSnackbar]);
+
+  useEffect(() => {
+    if (openPhotoSnackBar) {
+      photoUploadRef.current?.focus();
+    }
+  }, [openPhotoSnackBar]);
 
   const formik = useFormik<IStaff>({
     initialValues: getInitialValues(),
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      values.professionalInformation.photos = photoArray;
+      values.professionalInformation.photos = [...values.professionalInformation.photos, ...photoArray];
       if (editInitialValues) {
+        if (values.professionalInformation.photos.length === 0) {
+          setOpenPhotoSnackbar(true);
+          return;
+        }
         StaffServices.updateStaff(values);
       } else {
         if (values.personalInformation.cpf) {
           const cpfExists = await StaffServices.checkCpf(values.personalInformation.cpf);
           if (cpfExists.exists) {
-            setOpenSnackbar(true);
+            setOpenCpfSnackbar(true);
             return;
           }
+        }
+        if (values.professionalInformation.photos.length === 0) {
+          setOpenPhotoSnackbar(true);
+          return;
         }
         StaffServices.createStaff(values);
       }
@@ -201,15 +219,23 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
     }
   };
 
-  const handleCloseSnackbar = (event?: React.SyntheticEvent, reason?: string) => {
+  const handleCloseCpfSnackbar = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === "clickaway") {
       return;
     }
+    setOpenCpfSnackbar(false);
+  };
 
-    setOpenSnackbar(false);
+  const handleClosePhotoSnackbar = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenPhotoSnackbar(false);
   };
   return (
     <form onSubmit={formik.handleSubmit}>
+      <div ref={photoUploadRef} tabIndex={-1} />
+
       <Grid container spacing={2}>
         <Grid item xs={12} sx={{ mt: 2 }}>
           <Button component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<CloudUploadIcon />}>
@@ -589,9 +615,14 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
           </Button>
         </Grid>
       </Grid>
-      <Snackbar open={openSnackbar} autoHideDuration={6000}>
-        <Alert onClose={handleCloseSnackbar} severity="error">
+      <Snackbar open={openCpfSnackbar} autoHideDuration={6000}>
+        <Alert onClose={handleCloseCpfSnackbar} severity="error">
           CPF already exists
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openPhotoSnackBar} autoHideDuration={6000}>
+        <Alert onClose={handleClosePhotoSnackbar} severity="error">
+          At least one photo is required
         </Alert>
       </Snackbar>
     </form>
