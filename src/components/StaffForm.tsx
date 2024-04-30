@@ -69,35 +69,43 @@ const medicalSpecialties = [
 
 const validationSchema = Yup.object().shape({
   personalInformation: Yup.object().shape({
-    name: Yup.string().required("Required"),
-    cpf: Yup.number().required("Required"),
-    rg: Yup.number().required("Required"),
-    birthDate: Yup.date().required("Required"),
+    name: Yup.string().min(2, "Too Short!").max(50, "Too Long!").required("Required"),
+    cpf: Yup.number()
+      .test("cpf", "CPF must be 11 digits", (value) => String(value).length === 11)
+      .required("Required"),
+    rg: Yup.number()
+      .test("rg", "RG must be 9 digits", (value) => String(value).length === 9)
+      .required("Required"),
+    birthDate: Yup.date().max(new Date(), "Birth date cannot be in the future").required("Required"),
     email: Yup.string()
       .email("Invalid email")
       .test("email", "Email is required when phone is not provided", function (value) {
         const { phone } = this.parent;
         return (phone && phone.length > 0) || (value && value.length > 0);
       }),
-    phone: Yup.string().test("phone", "Phone is required when email is not provided", function (value) {
-      const { email } = this.parent;
-      return (email && email.length > 0) || (value && value.length > 0);
-    }),
+    phone: Yup.string()
+      .min(10, "Phone number is too short")
+      .test("phone", "Phone is required when email is not provided", function (value) {
+        const { email } = this.parent;
+        return (email && email.length > 0) || (value && value.length > 0);
+      }),
     address: Yup.object().shape({
       street: Yup.string().required("Required"),
       number: Yup.number().required("Required"),
       neighborhood: Yup.string().required("Required"),
       city: Yup.string().required("Required"),
       state: Yup.string().required("Required"),
-      zipCode: Yup.number().required("Required"),
+      zipCode: Yup.string()
+        .matches(/^[0-9]{8}$/, "Zip Code must be 8 digits")
+        .required("Required"),
     }),
   }),
   professionalInformation: Yup.object().shape({
     crm: Yup.number().required("Required"),
     cfm: Yup.number().required("Required"),
     specialty: Yup.string().required("Required"),
-    hourConsultationPrice: Yup.number().required("Required"),
-    serviceArea: Yup.number().required("Required"),
+    hourConsultationPrice: Yup.number().min(0, "Hour consultation price cannot be negative").required("Required"),
+    serviceArea: Yup.number().min(0, "Service area cannot be negative").required("Required").max(100, "Service area cannot be greater than 100"),
     appointmentType: Yup.string().required("Required"),
     photos: Yup.array().of(Yup.string().required("Required")),
   }),
