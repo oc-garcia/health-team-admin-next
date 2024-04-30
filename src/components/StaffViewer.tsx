@@ -64,15 +64,15 @@ export default function StaffViewer() {
 
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const handleOpenForm = (value: IStaff) => {
+  const handleOpenForm = React.useCallback((value: IStaff) => {
     setOpenForm(true);
     setSelectedStaff(value);
-  };
+  }, []);
 
-  const handleCloseForm = () => {
+  const handleCloseForm = React.useCallback(() => {
     setOpenForm(false);
     setSelectedStaff(undefined);
-  };
+  }, []);
 
   const handleOpenDelete = (value: IStaff) => {
     setOpenDelete(true);
