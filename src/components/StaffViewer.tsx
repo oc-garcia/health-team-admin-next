@@ -35,6 +35,9 @@ import { storage } from "@/firebase/firebase";
 import { deleteObject, ref } from "firebase/storage";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import StaffOverview from "./StaffOverview";
+import { useActionBarContext } from "@/context/actionBarContext";
+import StaffCard from "./StaffCard";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -46,6 +49,8 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export default function StaffViewer() {
+  const { isTableView } = useActionBarContext();
+
   const [staff, setStaff] = React.useState<IStaff[]>([]);
 
   const [updatingStaffId, setUpdatingStaffId] = React.useState<string | null>(null);
@@ -116,195 +121,161 @@ export default function StaffViewer() {
   };
 
   return (
-    <TableContainer component={Paper}>
-      {staff.length === 0 ? (
-        <Alert variant="filled" icon={<InfoIcon fontSize="inherit" />} severity="info">
-          No staff registered yet.
-        </Alert>
-      ) : (
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Specialty</TableCell>
-              <TableCell>Location</TableCell>
-              <TableCell>Service Area Radius (km)</TableCell>
-              <TableCell>Actions</TableCell>
-              <TableCell>Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {staff.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((staffMember) => (
-              <TableRow key={staffMember.id}>
-                <TableCell component="th" scope="row">
-                  {staffMember.personalInformation.name}
-                </TableCell>
-                <TableCell>{staffMember.professionalInformation.specialty}</TableCell>
-                <TableCell>
-                  {staffMember.personalInformation.address.city}, {staffMember.personalInformation.address.neighborhood}
-                </TableCell>
-                <TableCell>{staffMember.professionalInformation.serviceArea}</TableCell>
-                <TableCell>
-                  <div className="flex gap-2 items-center ">
-                    <IconButton onClick={() => handleClickOpenCard(staffMember)} size="small" color="secondary">
-                      <SearchIcon />
-                    </IconButton>
-                    <IconButton onClick={() => handleOpenForm(staffMember)} size="small" color="info">
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton onClick={() => handleOpenDelete(staffMember)} size="small" color="error">
-                      <DeleteIcon />
-                    </IconButton>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={staffMember.status}
-                        onChange={async () => {
-                          if (typeof staffMember.id === "undefined") {
-                            return;
+    <>
+      {isTableView && (
+        <TableContainer component={Paper}>
+          {staff.length === 0 ? (
+            <Alert variant="filled" icon={<InfoIcon fontSize="inherit" />} severity="info">
+              No staff registered yet.
+            </Alert>
+          ) : (
+            <>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Specialty</TableCell>
+                    <TableCell>Location</TableCell>
+                    <TableCell>Service Area Radius (km)</TableCell>
+                    <TableCell>Actions</TableCell>
+                    <TableCell>Status</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {staff.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((staffMember) => (
+                    <TableRow key={staffMember.id}>
+                      <TableCell component="th" scope="row">
+                        {staffMember.personalInformation.name}
+                      </TableCell>
+                      <TableCell>{staffMember.professionalInformation.specialty}</TableCell>
+                      <TableCell>
+                        {staffMember.personalInformation.address.city},{" "}
+                        {staffMember.personalInformation.address.neighborhood}
+                      </TableCell>
+                      <TableCell>{staffMember.professionalInformation.serviceArea}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-2 items-center ">
+                          <IconButton onClick={() => handleClickOpenCard(staffMember)} size="small" color="secondary">
+                            <SearchIcon />
+                          </IconButton>
+                          <IconButton onClick={() => handleOpenForm(staffMember)} size="small" color="info">
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton onClick={() => handleOpenDelete(staffMember)} size="small" color="error">
+                            <DeleteIcon />
+                          </IconButton>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={staffMember.status}
+                              onChange={async () => {
+                                if (typeof staffMember.id === "undefined") {
+                                  return;
+                                }
+                                setUpdatingStaffId(staffMember.id);
+                                staffMember.status = !staffMember.status;
+                                await StaffServices.updateStaff(staffMember);
+                                setUpdatingStaffId(null);
+                              }}
+                              disabled={updatingStaffId === staffMember.id}
+                            />
                           }
-                          setUpdatingStaffId(staffMember.id);
-                          staffMember.status = !staffMember.status;
-                          await StaffServices.updateStaff(staffMember);
-                          setUpdatingStaffId(null);
-                        }}
-                        disabled={updatingStaffId === staffMember.id}
-                      />
-                    }
-                    label={staffMember.status ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-          <TablePagination
-            rowsPerPageOptions={[10, 15, 25]}
-            component="div"
-            count={staff.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Table>
-      )}
-      <Dialog open={openForm}>
-        <DialogTitle>
-          <Box
-            sx={{
-              padding: "0px 10px",
-              display: "flex",
-              alignItems: "center ",
-              justifyContent: "space-between",
-              gap: "1rem",
-            }}>
-            <p>Edit Staff</p>
-            <IconButton aria-label="close" onClick={handleCloseForm}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          <StaffForm editInitialValues={selectedStaff} handleClose={handleCloseForm} />
-        </DialogContent>
-      </Dialog>
+                          label={
+                            staffMember.status ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <TablePagination
+                rowsPerPageOptions={[10, 15, 25]}
+                component="span"
+                count={staff.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </>
+          )}
+          <Dialog open={openForm}>
+            <DialogTitle>
+              <Box
+                sx={{
+                  padding: "0px 10px",
+                  display: "flex",
+                  alignItems: "center ",
+                  justifyContent: "space-between",
+                  gap: "1rem",
+                }}>
+                <p>Edit Staff</p>
+                <IconButton aria-label="close" onClick={handleCloseForm}>
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+            </DialogTitle>
+            <DialogContent>
+              <StaffForm editInitialValues={selectedStaff} handleClose={handleCloseForm} />
+            </DialogContent>
+          </Dialog>
 
-      <Dialog
-        open={openDelete}
-        onClose={handleCloseDelete}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">{"Confirm deletion"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Do you really want to delete {selectedStaff?.personalInformation.name}?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDelete}>Cancel</Button>
-          <Button
-            color="error"
-            onClick={() => {
-              if (selectedStaff && selectedStaff.id) {
-                StaffServices.deleteStaff(selectedStaff.id);
-                handleCloseDelete();
-              }
-            }}
-            autoFocus>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <Dialog
+            open={openDelete}
+            onClose={handleCloseDelete}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description">
+            <DialogTitle id="alert-dialog-title">{"Confirm deletion"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Do you really want to delete {selectedStaff?.personalInformation.name}?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDelete}>Cancel</Button>
+              <Button
+                color="error"
+                onClick={() => {
+                  if (selectedStaff && selectedStaff.id) {
+                    StaffServices.deleteStaff(selectedStaff.id);
+                    handleCloseDelete();
+                  }
+                }}
+                autoFocus>
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
 
-      <Dialog
-        open={openCard}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handleCloseCard}
-        aria-describedby="alert-dialog-slide-description">
-        <DialogTitle>{"Staff Overview"}</DialogTitle>
-        <DialogContent>
-          <div id="alert-dialog-slide-description">
-            {selectedStaff && (
-              <div>
-                <Typography variant="h6">Personal Information</Typography>
-                <Typography>Name: {selectedStaff.personalInformation.name}</Typography>
-                <Typography>Email: {selectedStaff.personalInformation.email}</Typography>
-                <Typography>CPF: {selectedStaff.personalInformation.cpf}</Typography>
-                <Typography>RG: {selectedStaff.personalInformation.rg}</Typography>
-                <Typography>Birth Date: {selectedStaff.personalInformation.birthDate}</Typography>
-                <Typography>Phone: {selectedStaff.personalInformation.phone}</Typography>
-                <Typography>
-                  Address: {selectedStaff.personalInformation.address.street},{" "}
-                  {selectedStaff.personalInformation.address.number}, {selectedStaff.personalInformation.address.city},{" "}
-                  {selectedStaff.personalInformation.address.state}, {selectedStaff.personalInformation.address.zipCode}
-                </Typography>
-                <Typography sx={{ marginTop: "1rem" }} variant="h6">
-                  Professional Information
-                </Typography>
-                <Typography>Specialty: {selectedStaff.professionalInformation.specialty}</Typography>
-                <Typography>CRM: {selectedStaff.professionalInformation.crm}</Typography>
-                <Typography>CFM: {selectedStaff.professionalInformation.cfm}</Typography>
-                <Typography>Service Area Radius (km): {selectedStaff.professionalInformation.serviceArea}</Typography>
-                <Typography>Appointment Type: {selectedStaff.professionalInformation.appointmentType}</Typography>
-                <Typography>
-                  Hour Consultation Price: {selectedStaff.professionalInformation.hourConsultationPrice}
-                </Typography>
-                <Typography sx={{ marginTop: "1rem" }} variant="h6">
-                  Status {selectedStaff.status ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
-                </Typography>
-                <Typography sx={{ marginTop: "1rem" }} variant="h6">
-                  Photos
-                </Typography>
-                <div className="flex items-center gap-2">
-                  {selectedStaff.professionalInformation.photos.length > 0 ? (
-                    selectedStaff.professionalInformation.photos.map((photo, index) => (
-                      <div key={index} style={{ position: "relative", display: "inline-block" }}>
-                        <img src={photo} alt="Staff" style={{ width: "100px", height: "100px" }} />
-                        <IconButton
-                          size="small"
-                          color="error"
-                          style={{ position: "absolute", top: 0, right: 0 }}
-                          onClick={() => handleDeletePhoto(selectedStaff, index)}>
-                          <DeleteIcon />
-                        </IconButton>
-                      </div>
-                    ))
-                  ) : (
-                    <Typography>No photos registered</Typography>
-                  )}
-                </div>
+          <Dialog
+            open={openCard}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleCloseCard}
+            aria-describedby="alert-dialog-slide-description">
+            <DialogTitle>{"Staff Overview"}</DialogTitle>
+            <DialogContent>
+              <div id="alert-dialog-slide-description">
+                {selectedStaff && <StaffOverview selectedStaff={selectedStaff} handleDeletePhoto={handleDeletePhoto} />}
               </div>
-            )}
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseCard}>close</Button>
-        </DialogActions>
-      </Dialog>
-    </TableContainer>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseCard}>close</Button>
+            </DialogActions>
+          </Dialog>
+        </TableContainer>
+      )}
+      {!isTableView && (
+        <Box sx={{ display: "flex",  justifyContent: "center", flexWrap: "wrap", gap: "1rem" }}>
+          {staff.map((staffMember) => (
+            <StaffCard staff={staffMember} key={staffMember.id} />
+          ))}
+        </Box>
+      )}
+    </>
   );
 }

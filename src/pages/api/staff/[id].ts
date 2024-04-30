@@ -9,17 +9,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const staffRef = doc(db, "staff", id as string);
       await updateDoc(staffRef, req.body);
-
       res.status(200).json({ message: "Staff document updated successfully" });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
-  }
-  if (req.method === "DELETE") {
+  } else if (req.method === "DELETE") {
     try {
       const staffRef = doc(db, "staff", id as string);
       await deleteDoc(staffRef);
-
       res.status(200).json({ message: "Staff document deleted successfully" });
     } catch (error: any) {
       res.status(500).json({ error: error.message });

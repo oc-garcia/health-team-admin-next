@@ -7,9 +7,14 @@ import { useState } from "react";
 import StaffForm from "./StaffForm";
 import { Box, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import ViewModuleIcon from "@mui/icons-material/ViewModule";
+import ViewListIcon from "@mui/icons-material/ViewList";
+import { useActionBarContext } from "@/context/actionBarContext";
 
 export default function ActionsBar() {
   const [open, setOpen] = useState(false);
+
+  const { isTableView, handleSetIsTableView } = useActionBarContext();
 
   const handleOpen = () => {
     setOpen(true);
@@ -31,6 +36,10 @@ export default function ActionsBar() {
       <Button variant="contained" onClick={handleOpen}>
         Add Staff
       </Button>
+
+      <IconButton onClick={() => handleSetIsTableView(!isTableView)}>
+        {isTableView ? <ViewListIcon /> : <ViewModuleIcon />}
+      </IconButton>
 
       <Dialog open={open}>
         <DialogTitle>

@@ -1,4 +1,5 @@
 import { useFormik } from "formik";
+import { v4 as uuidv4 } from "uuid";
 import {
   Alert,
   Button,
@@ -138,6 +139,8 @@ interface StaffFormProps {
 }
 
 const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose }) => {
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+
   const [photoArray, setPhotoArray] = useState<string[]>(editInitialValues?.professionalInformation.photos || []);
 
   const [openCpfSnackbar, setOpenCpfSnackbar] = useState(false);
@@ -211,11 +214,13 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
     const file = event.target.files?.[0];
     if (file) {
       const urls = [];
-      const storageRef = ref(storage, "photos/" + file.name);
+      const uniqueId = uuidv4();
+      const storageRef = ref(storage, "photos/" + uniqueId + "_" + file.name);
       const snapshot = await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
       urls.push(url);
       setPhotoArray([...photoArray, ...urls]);
+      setUploadSuccess(true);
     }
   };
 
@@ -238,7 +243,13 @@ const StaffForm: React.FC<StaffFormProps> = ({ editInitialValues, handleClose })
 
       <Grid container spacing={2}>
         <Grid item xs={12} sx={{ mt: 2 }}>
-          <Button component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<CloudUploadIcon />}>
+          <Button
+            color={uploadSuccess ? "success" : "warning"}
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            startIcon={<CloudUploadIcon />}>
             Upload photo
             <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
           </Button>

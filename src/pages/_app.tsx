@@ -6,6 +6,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Head from "next/head";
 import React from "react";
 import { PaletteMode } from "@mui/material";
+import { ActionBarProvider } from "@/context/actionBarContext";
 
 export default function MyApp(props: AppProps) {
   let { Component, pageProps } = props;
@@ -48,11 +49,13 @@ export default function MyApp(props: AppProps) {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <meta name="description" content="Health Team Admin" />
       </Head>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-          <Component {...pageProps} />
-        </ThemeProvider>
-      </QueryClientProvider>
+      <ActionBarProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider theme={theme}>
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </ActionBarProvider>
     </AppCacheProvider>
   );
 }
