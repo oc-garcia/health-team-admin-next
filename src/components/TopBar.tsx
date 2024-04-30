@@ -9,11 +9,11 @@ import { IconButton, useMediaQuery } from "@mui/material";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 
-interface SearchAppBarProps {
+interface TopBarProps {
   toggleTheme: () => void;
 }
 
-export default function SearchAppBar({ toggleTheme }: SearchAppBarProps) {
+export default function TopBar({ toggleTheme }: TopBarProps) {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
 

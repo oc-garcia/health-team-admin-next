@@ -14,8 +14,17 @@
     "incremental": true,
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["jest", "node"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/ActionsBar/SearchInput", "src/firebase/firebase.ts", "src/components/ActionsBar/StaffForm"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/components/ActionsBar/SearchInput",
+    "src/firebase/firebase.ts",
+    "src/components/ActionsBar/StaffForm",
+    "jest.setup.js"
+  ],
   "exclude": ["node_modules"]
 }
