@@ -26,6 +26,8 @@ The application is deployed and can be accessed at [https://health-team-admin-ne
 
 **UUID** for generating unique identifiers: UUID is a simple library that generates unique identifiers. It's used in this project for creating unique names for images stored in Firebase Storage.
 
+**Tailwind** for complementary style handling.
+
 ## Getting Started
 
 First, install the dependencies:
