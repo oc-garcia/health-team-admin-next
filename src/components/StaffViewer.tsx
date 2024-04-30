@@ -19,6 +19,7 @@ import {
   DialogContentText,
   DialogTitle,
   FormControlLabel,
+  Grid,
   IconButton,
   Slide,
   Switch,
@@ -122,14 +123,14 @@ export default function StaffViewer() {
 
   return (
     <>
-      {isTableView && (
-        <TableContainer component={Paper}>
-          {staff.length === 0 ? (
-            <Alert variant="filled" icon={<InfoIcon fontSize="inherit" />} severity="info">
-              No staff registered yet.
-            </Alert>
-          ) : (
-            <>
+      {staff.length === 0 ? (
+        <Alert variant="filled" icon={<InfoIcon fontSize="inherit" />} severity="info">
+          No staff registered yet.
+        </Alert>
+      ) : (
+        <>
+          {isTableView ? (
+            <TableContainer component={Paper}>
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                   <TableRow>
@@ -201,80 +202,84 @@ export default function StaffViewer() {
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
-            </>
+
+              <Dialog open={openForm}>
+                <DialogTitle>
+                  <Box
+                    sx={{
+                      padding: "0px 10px",
+                      display: "flex",
+                      alignItems: "center ",
+                      justifyContent: "space-between",
+                      gap: "1rem",
+                    }}>
+                    <p>Edit Staff</p>
+                    <IconButton aria-label="close" onClick={handleCloseForm}>
+                      <CloseIcon />
+                    </IconButton>
+                  </Box>
+                </DialogTitle>
+                <DialogContent>
+                  <StaffForm editInitialValues={selectedStaff} handleClose={handleCloseForm} />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog
+                open={openDelete}
+                onClose={handleCloseDelete}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description">
+                <DialogTitle id="alert-dialog-title">{"Confirm deletion"}</DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Do you really want to delete {selectedStaff?.personalInformation.name}?
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseDelete}>Cancel</Button>
+                  <Button
+                    color="error"
+                    onClick={() => {
+                      if (selectedStaff && selectedStaff.id) {
+                        StaffServices.deleteStaff(selectedStaff.id);
+                        handleCloseDelete();
+                      }
+                    }}
+                    autoFocus>
+                    Delete
+                  </Button>
+                </DialogActions>
+              </Dialog>
+
+              <Dialog
+                open={openCard}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleCloseCard}
+                aria-describedby="alert-dialog-slide-description">
+                <DialogTitle>{"Staff Overview"}</DialogTitle>
+                <DialogContent>
+                  <div id="alert-dialog-slide-description">
+                    {selectedStaff && (
+                      <StaffOverview selectedStaff={selectedStaff} handleDeletePhoto={handleDeletePhoto} />
+                    )}
+                  </div>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseCard}>close</Button>
+                </DialogActions>
+              </Dialog>
+            </TableContainer>
+          ) : (
+            <Grid container spacing={2}>
+              {staff.map((staffMember) => (
+                <Grid item xs={12} sm={6} md={3} key={staffMember.id}>
+                  <StaffCard staff={staffMember} />
+                </Grid>
+              ))}
+            </Grid>
           )}
-          <Dialog open={openForm}>
-            <DialogTitle>
-              <Box
-                sx={{
-                  padding: "0px 10px",
-                  display: "flex",
-                  alignItems: "center ",
-                  justifyContent: "space-between",
-                  gap: "1rem",
-                }}>
-                <p>Edit Staff</p>
-                <IconButton aria-label="close" onClick={handleCloseForm}>
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-            </DialogTitle>
-            <DialogContent>
-              <StaffForm editInitialValues={selectedStaff} handleClose={handleCloseForm} />
-            </DialogContent>
-          </Dialog>
-
-          <Dialog
-            open={openDelete}
-            onClose={handleCloseDelete}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description">
-            <DialogTitle id="alert-dialog-title">{"Confirm deletion"}</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                Do you really want to delete {selectedStaff?.personalInformation.name}?
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDelete}>Cancel</Button>
-              <Button
-                color="error"
-                onClick={() => {
-                  if (selectedStaff && selectedStaff.id) {
-                    StaffServices.deleteStaff(selectedStaff.id);
-                    handleCloseDelete();
-                  }
-                }}
-                autoFocus>
-                Delete
-              </Button>
-            </DialogActions>
-          </Dialog>
-
-          <Dialog
-            open={openCard}
-            TransitionComponent={Transition}
-            keepMounted
-            onClose={handleCloseCard}
-            aria-describedby="alert-dialog-slide-description">
-            <DialogTitle>{"Staff Overview"}</DialogTitle>
-            <DialogContent>
-              <div id="alert-dialog-slide-description">
-                {selectedStaff && <StaffOverview selectedStaff={selectedStaff} handleDeletePhoto={handleDeletePhoto} />}
-              </div>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseCard}>close</Button>
-            </DialogActions>
-          </Dialog>
-        </TableContainer>
-      )}
-      {!isTableView && (
-        <Box sx={{ display: "flex",  justifyContent: "center", flexWrap: "wrap", gap: "1rem" }}>
-          {staff.map((staffMember) => (
-            <StaffCard staff={staffMember} key={staffMember.id} />
-          ))}
-        </Box>
+        </>
       )}
     </>
   );
