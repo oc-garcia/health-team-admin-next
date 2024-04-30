@@ -1,8 +1,11 @@
+import { IStaff } from "@/interfaces/IStaff";
 import { createContext, useState, useContext } from "react";
 
 interface ActionBarType {
   isTableView: boolean;
   handleSetIsTableView: (value: boolean) => void;
+  staff: IStaff[];
+  handleSetStaff: (value: IStaff[]) => void;
 }
 
 export const ActionBarContext = createContext<ActionBarType | undefined>(undefined);
@@ -10,12 +13,20 @@ export const ActionBarContext = createContext<ActionBarType | undefined>(undefin
 export const ActionBarProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isTableView, setIsTableView] = useState(true);
 
+  const [staff, setStaff] = useState<IStaff[]>([]);
+
   const handleSetIsTableView = (value: boolean) => {
     setIsTableView(value);
   };
 
+  const handleSetStaff = (value: IStaff[]) => {
+    setStaff(value);
+  };
+
   return (
-    <ActionBarContext.Provider value={{ isTableView, handleSetIsTableView }}>{children}</ActionBarContext.Provider>
+    <ActionBarContext.Provider value={{ isTableView, handleSetIsTableView, staff, handleSetStaff }}>
+      {children}
+    </ActionBarContext.Provider>
   );
 };
 

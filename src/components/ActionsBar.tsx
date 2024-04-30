@@ -33,9 +33,12 @@ export default function ActionsBar() {
         justifyContent: "space-between",
         gap: "1rem",
       }}>
-      <Button variant="contained" onClick={handleOpen}>
-        Add Staff
-      </Button>
+      <div className="flex gap-2">
+        <Button variant="contained" onClick={handleOpen}>
+          Add Staff
+        </Button>
+
+      </div>
 
       <IconButton onClick={() => handleSetIsTableView(!isTableView)}>
         {isTableView ? <ViewListIcon /> : <ViewModuleIcon />}

@@ -13,7 +13,7 @@ const StaffCard: React.FC<StaffCardProps> = ({ staff }) => {
   const avatarImage = professionalInformation.photos.length > 0 ? professionalInformation.photos[0] : "";
 
   return (
-    <Card>
+    <Card >
       <CardContent>
         <div className="flex items-center justify-between">
           <Avatar alt={personalInformation.name} src={avatarImage} />

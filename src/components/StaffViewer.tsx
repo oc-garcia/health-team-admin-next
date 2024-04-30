@@ -50,9 +50,7 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export default function StaffViewer() {
-  const { isTableView } = useActionBarContext();
-
-  const [staff, setStaff] = React.useState<IStaff[]>([]);
+  const { isTableView, staff, handleSetStaff } = useActionBarContext();
 
   const [updatingStaffId, setUpdatingStaffId] = React.useState<string | null>(null);
 
@@ -108,7 +106,7 @@ export default function StaffViewer() {
   };
 
   React.useEffect(() => {
-    StaffServices.getStaff(setStaff);
+    StaffServices.getStaff(handleSetStaff);
   }, []);
 
   const handleDeletePhoto = async (staff: IStaff, index: number) => {

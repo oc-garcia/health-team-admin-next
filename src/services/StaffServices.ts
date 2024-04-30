@@ -12,7 +12,7 @@ export const StaffServices = {
       console.error(error);
     }
   },
-  async getStaff(setStaff: React.Dispatch<React.SetStateAction<IStaff[]>>) {
+  async getStaff(handleSetStaff: (value: IStaff[]) => void) {
     const staffRef = collection(db, "staff");
 
     onSnapshot(staffRef, (snapshot) => {
@@ -21,7 +21,7 @@ export const StaffServices = {
         const data = doc.data();
         staffData.push({ id: doc.id, ...data } as IStaff);
       });
-      setStaff(staffData);
+      handleSetStaff(staffData);
     });
   },
   async checkCpf(cpf: number) {
